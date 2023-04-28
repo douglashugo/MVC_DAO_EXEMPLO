@@ -41,8 +41,5 @@ public class ContatoVO {
     public String toString() {
         return "ContatoVO [id=" + id + ", nome=" + nome + ", email=" + email + "]";
     }
-
-    
-
     
 }
