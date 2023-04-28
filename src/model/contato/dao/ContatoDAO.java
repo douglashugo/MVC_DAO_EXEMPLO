@@ -37,7 +37,7 @@ public class ContatoDAO implements IContato {
 
     @Override
     public void atualizar(ContatoVO pContato) throws Exception {
-        String query = "UPDATE contato set nome='%s', email='%s' where id = %d;";
+        String query = "UPDATE contatos set nome='%s', email='%s' where id = %d;";
         try (Statement stm = connection.createStatement()) {
             String sql = String.format(query,
                     pContato.getNome(),
@@ -55,7 +55,7 @@ public class ContatoDAO implements IContato {
     @Override
     public ContatoVO buscarPorEmail(String pEmail) throws Exception {
         ContatoVO contato = null;
-        String query = "SELECT id, nome, email from contato where email = '%s'";
+        String query = "SELECT id, nome, email from contatos where email = '%s'";
 
         try (Statement stm = connection.createStatement();
                 ResultSet rst = stm.executeQuery(String.format(query, pEmail))) {
@@ -73,7 +73,7 @@ public class ContatoDAO implements IContato {
     }
 
     @Override
-    public List<ContatoVO> buscarTodos() {
+    public List<ContatoVO> buscarTodos() throws Exception {
 
         List<ContatoVO> contatos = new ArrayList<>();
 
@@ -93,16 +93,21 @@ public class ContatoDAO implements IContato {
 
             return contatos;
         } catch (Exception e) {
-            System.out.println("Erro: " + e.getLocalizedMessage());
+            logger.log(Level.SEVERE, "Falha ao buscar contatos.", e);
+            throw e;
         }
-
-        return contatos;
     }
 
     @Override
-    public void excluir(Integer pId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'excluir'");
+    public void excluir(Integer pId) throws Exception{
+        String query = "DELETE FROM contatos WHERE id = "+pId;
+
+        try (Statement stm = connection.createStatement()) {
+            stm.execute(query);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Falha ao excluir contato.", e);
+            throw e;
+        }
     }
 
 }
