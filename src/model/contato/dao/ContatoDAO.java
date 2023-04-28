@@ -42,19 +42,34 @@ public class ContatoDAO implements IContato {
             String sql = String.format(query,
                     pContato.getNome(),
                     pContato.getEmail(),
-                     pContato.getId());
+                    pContato.getId());
 
             stm.execute(sql);
             logger.info("Contato atualizado com sucesso.");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Falha ao atualizar contato", e);
+            throw e;
         }
     }
 
     @Override
     public ContatoVO buscarPorEmail(String pEmail) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+        ContatoVO contato = null;
+        String query = "SELECT id, nome, email from contato where email = '%s'";
+
+        try (Statement stm = connection.createStatement();
+                ResultSet rst = stm.executeQuery(String.format(query, pEmail))) {
+            if(rst.next()) {
+                contato = new ContatoVO();
+                contato.setId(rst.getInt("id"));
+                contato.setNome(rst.getString("nome"));
+                contato.setEmail(rst.getString("email"));                
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Falha ao buscar conato.", e);
+            throw e;
+        }
+        return contato;
     }
 
     @Override
