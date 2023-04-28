@@ -77,7 +77,7 @@ public class ContatoDAO implements IContato {
 
         List<ContatoVO> contatos = new ArrayList<>();
 
-        String query = "SELECT nome, email FROM contatos;";
+        String query = "SELECT id, nome, email FROM contatos;";
 
         try (Statement stm = connection.createStatement();
                 ResultSet rst = stm.executeQuery(query)) {
