@@ -7,9 +7,11 @@ import model.contato.ContatoVO;
 public interface IContato {
     void salvar(ContatoVO pContato) throws Exception;
 
-    ContatoVO atualizar(Integer pId, ContatoVO pContato) throws Exception;
+    void atualizar(ContatoVO pContato) throws Exception;
 
-    ContatoVO buscarPorId(Integer pId) throws Exception;
+    ContatoVO buscarPorEmail(String pEmail) throws Exception;
+
+    void excluir(Integer pId);
 
     List<ContatoVO> buscarTodos();
 

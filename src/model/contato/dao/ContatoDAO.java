@@ -31,13 +31,13 @@ public class ContatoDAO implements IContato {
     }
 
     @Override
-    public ContatoVO atualizar(Integer pId, ContatoVO pContato) throws Exception {
+    public void atualizar(ContatoVO pContato) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'atualizar'");
     }
 
     @Override
-    public ContatoVO buscarPorId(Integer pId) throws Exception {
+    public ContatoVO buscarPorEmail(String pEmail) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
     }
@@ -67,6 +67,12 @@ public class ContatoDAO implements IContato {
         }
 
         return contatos;
+    }
+
+    @Override
+    public void excluir(Integer pId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'excluir'");
     }
 
 }
