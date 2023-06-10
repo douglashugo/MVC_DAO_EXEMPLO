@@ -11,7 +11,7 @@ public interface IContato {
 
     ContatoVO buscarPorEmail(String pEmail) throws Exception;
 
-    void excluir(Integer pId) throws Exception;
+    void excluir(Integer id) throws Exception;
 
     List<ContatoVO> buscarTodos() throws Exception;
 

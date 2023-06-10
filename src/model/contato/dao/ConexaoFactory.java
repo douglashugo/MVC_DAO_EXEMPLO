@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 public class ConexaoFactory {
 
     private static final Logger logger = Logger.getLogger(ConexaoFactory.class.getName());
-    private static final String url = "jdbc:mysql://localhost:3306/fatec";
+    private static final String url = "jdbc:mariadb://localhost:3306/fatec";
     private static final String user = "root";
-    private static final String passwd = "segredo";
+    private static final String passwd = "";
 
     public static Connection getConexao() throws Exception {
         try {

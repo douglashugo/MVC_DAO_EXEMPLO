@@ -1,8 +1,8 @@
 package model.contato.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,10 +11,8 @@ import java.util.logging.Logger;
 import model.contato.ContatoVO;
 
 public class ContatoDAO implements IContato {
-
-    final private Connection connection;
-    final private Logger logger = Logger
-            .getLogger(ContatoDAO.class.getName());
+    private final Connection connection;
+    private final Logger logger = Logger.getLogger(ContatoDAO.class.getName());
 
     public ContatoDAO(Connection connection) {
         this.connection = connection;
@@ -22,29 +20,27 @@ public class ContatoDAO implements IContato {
 
     @Override
     public void salvar(ContatoVO pContato) throws Exception {
-        String query = "INSERT INTO contatos (nome, email) values('%s','%s');";
+        String query = "INSERT INTO contatos (nome, email) VALUES (?, ?);";
 
-        try (Statement stm = connection.createStatement()) {
-            stm.execute(String.format(query,
-                    pContato.getNome(),
-                    pContato.getEmail()));
+        try (PreparedStatement stm = connection.prepareStatement(query)) {
+            stm.setString(1, pContato.getNome());
+            stm.setString(2, pContato.getEmail());
+            stm.execute();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Falha ao inserir contato", e);
             throw e;
         }
-
     }
 
     @Override
     public void atualizar(ContatoVO pContato) throws Exception {
-        String query = "UPDATE contatos set nome='%s', email='%s' where id = %d;";
-        try (Statement stm = connection.createStatement()) {
-            String sql = String.format(query,
-                    pContato.getNome(),
-                    pContato.getEmail(),
-                    pContato.getId());
+        String query = "UPDATE contatos SET nome = ?, email = ? WHERE id = ?;";
 
-            stm.execute(sql);
+        try (PreparedStatement stm = connection.prepareStatement(query)) {
+            stm.setString(1, pContato.getNome());
+            stm.setString(2, pContato.getEmail());
+            stm.setInt(3, pContato.getId());
+            stm.execute();
             logger.info("Contato atualizado com sucesso.");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Falha ao atualizar contato", e);
@@ -55,18 +51,20 @@ public class ContatoDAO implements IContato {
     @Override
     public ContatoVO buscarPorEmail(String pEmail) throws Exception {
         ContatoVO contato = null;
-        String query = "SELECT id, nome, email from contatos where email = '%s'";
+        String query = "SELECT id, nome, email FROM contatos WHERE email = ?";
 
-        try (Statement stm = connection.createStatement();
-                ResultSet rst = stm.executeQuery(String.format(query, pEmail))) {
-            if(rst.next()) {
-                contato = new ContatoVO();
-                contato.setId(rst.getInt("id"));
-                contato.setNome(rst.getString("nome"));
-                contato.setEmail(rst.getString("email"));                
+        try (PreparedStatement stm = connection.prepareStatement(query)) {
+            stm.setString(1, pEmail);
+            try (ResultSet rst = stm.executeQuery()) {
+                if (rst.next()) {
+                    contato = new ContatoVO();
+                    contato.setId(rst.getInt("id"));
+                    contato.setNome(rst.getString("nome"));
+                    contato.setEmail(rst.getString("email"));
+                }
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Falha ao buscar conato.", e);
+            logger.log(Level.SEVERE, "Falha ao buscar contato", e);
             throw e;
         }
         return contato;
@@ -74,40 +72,35 @@ public class ContatoDAO implements IContato {
 
     @Override
     public List<ContatoVO> buscarTodos() throws Exception {
-
         List<ContatoVO> contatos = new ArrayList<>();
-
         String query = "SELECT id, nome, email FROM contatos;";
 
-        try (Statement stm = connection.createStatement();
-                ResultSet rst = stm.executeQuery(query)) {
-
+        try (PreparedStatement stm = connection.prepareStatement(query);
+                ResultSet rst = stm.executeQuery()) {
             while (rst.next()) {
                 ContatoVO contatoVO = new ContatoVO();
                 contatoVO.setId(rst.getInt("id"));
                 contatoVO.setNome(rst.getString("nome"));
                 contatoVO.setEmail(rst.getString("email"));
-
                 contatos.add(contatoVO);
             }
-
-            return contatos;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Falha ao buscar contatos.", e);
+            logger.log(Level.SEVERE, "Falha ao buscar contatos", e);
             throw e;
         }
+        return contatos;
     }
 
     @Override
-    public void excluir(Integer pId) throws Exception{
-        String query = "DELETE FROM contatos WHERE id = "+pId;
+    public void excluir(Integer id) throws Exception {
+        String query = "DELETE FROM contatos WHERE id = ?;";
 
-        try (Statement stm = connection.createStatement()) {
-            stm.execute(query);
+        try (PreparedStatement stm = connection.prepareStatement(query)) {
+            stm.setInt(1, id);
+            stm.execute();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Falha ao excluir contato.", e);
+            logger.log(Level.SEVERE, "Falha ao excluir contato", e);
             throw e;
         }
     }
-
 }
