@@ -2,7 +2,6 @@ package test;
 
 import java.sql.Connection;
 import java.util.List;
-
 import model.contato.ContatoVO;
 import model.contato.dao.ConexaoFactory;
 import model.contato.dao.ContatoDAO;

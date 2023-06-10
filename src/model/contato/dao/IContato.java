@@ -1,7 +1,6 @@
 package model.contato.dao;
 
 import java.util.List;
-
 import model.contato.ContatoVO;
 
 public interface IContato {
